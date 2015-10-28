@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Flow</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="path">给个地址就下载（测试。不服？）：</string>
+    <string name="button">开始下载</string>
+    <string name="success">下载完成</string>
+    <string name="error">下载出错</string>
+    <string name="stopbutton">暂停下载</string>
+    <string name="sdcarderror">没有SD卡</string>
+    <string name="fileaddress2"></string>
+    <string name="fileaddress"></string>
+
+</resources>
