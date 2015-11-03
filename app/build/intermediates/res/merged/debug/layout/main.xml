@@ -44,20 +44,27 @@
         android:layout_height="20dip" />
 
     <TextView
-        android:id="@+id/resultView"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center" />
+        android:id="@+id/music_name"
+        android:layout_gravity="center_horizontal" />
 
-    <Button
-        android:id="@+id/btn_online_play"
+    <com.android.volley.toolbox.NetworkImageView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Flow"
-        android:layout_weight="0.61" />
-<SeekBar
+        android:layout_height="308dp"
+        android:id="@+id/network_image_view"
+        android:src="@drawable/player_play" />
+
+    <SeekBar
         android:id="@+id/music_progress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:max="100" />
+
+    <Button
+        android:id="@+id/btn_online_play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Flow"
+        android:src="@drawable/player_play"/>
 </LinearLayout><!-- From: file:/Users/shokill/AndroidStudioProjects/xxxxx/app/src/main/res/layout/main.xml -->

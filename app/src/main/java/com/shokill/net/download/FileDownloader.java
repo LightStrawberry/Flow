@@ -14,10 +14,6 @@ import java.util.regex.Pattern;
 import android.content.Context;
 import android.util.Log;
 
-/**
- * �ļ�������
- * 
- */
 public class FileDownloader {
 	private static final String TAG = "FileDownloader";
 	private Context context;

@@ -7,6 +7,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -20,6 +21,10 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
+import com.android.volley.toolbox.Volley;
 import com.shokill.download.util.Player;
 import com.shokill.net.download.DownloadProgressListener;
 import com.shokill.net.download.FileDownloader;
@@ -33,19 +38,21 @@ import org.json.JSONObject;
 public class MainActivity extends Activity {
 	private static final int PROCESSING = 1;
 	private static final int FAILURE = -1;
+    private static final int IMAGE = 0;
 
 	private EditText pathText;
 	private TextView resultView;
 	private Button downloadButton;
 	private Button stopButton;
+    private TextView music_name;
 	private ProgressBar progressBar;
 	private Button playBtn;
 	private Player player;
 	private SeekBar musicProgress;
-
 	private Handler handler = new UIHandler();
+    private NetworkImageView networkImageView;
 
-	private final class UIHandler extends Handler {
+    private final class UIHandler extends Handler {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case PROCESSING:
@@ -63,6 +70,24 @@ public class MainActivity extends Activity {
 				Toast.makeText(getApplicationContext(), R.string.error,
 						Toast.LENGTH_LONG).show();
 				break;
+
+                case IMAGE:
+                    Bundle bundle = msg.getData();
+                    String cover = bundle.getString("SongCover");
+                    String name = bundle.getString("SongName");
+                    music_name.setText(name);
+                    RequestQueue mQueue = Volley.newRequestQueue(getBaseContext());
+                    ImageLoader imageLoader = new ImageLoader(mQueue, new ImageLoader.ImageCache() {
+                        @Override
+                        public void putBitmap(String url, Bitmap bitmap) {
+                        }
+                        @Override
+                        public Bitmap getBitmap(String url) {
+                            return null;
+                        }
+                    });
+                    networkImageView.setImageUrl(cover, imageLoader);
+                    break;
 			}
 		}
 	}
@@ -83,8 +108,10 @@ public class MainActivity extends Activity {
 		playBtn.setOnClickListener(listener);
 		musicProgress = (SeekBar) findViewById(R.id.music_progress);
 		player = new Player(musicProgress);
+        music_name = (TextView) findViewById(R.id.music_name);
 		musicProgress.setOnSeekBarChangeListener(new SeekBarChangeEvent());
-	}
+        networkImageView = (NetworkImageView) findViewById(R.id.network_image_view);
+    }
 
 	private final class ButtonClickListener implements View.OnClickListener {
 		@Override
@@ -121,35 +148,8 @@ public class MainActivity extends Activity {
 				stopButton.setEnabled(false);
 				break;
 			case R.id.btn_online_play:
-				new Thread(new Runnable() {
-					@Override
-					public void run() {
-						String url = getSong();
-						player.playUrl(url);
-					}
-				}).start();
-				break;
+                playMusic();
 			}
-		}
-
-		private String getSong() {
-			HttpClient client = new DefaultHttpClient();
-			StringBuilder builder = new StringBuilder();
-			String musicUrl;
-			HttpGet get = new HttpGet("http://hr.hgdonline.net/music/player.php");
-			try {
-				HttpResponse response = client.execute(get);
-				BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-				for (String s = reader.readLine(); s != null; s = reader.readLine()) {
-					builder.append(s);
-				}
-				JSONObject myJsonObject = new JSONObject(builder.toString());
-				musicUrl = myJsonObject.getString("mp3");
-				return musicUrl;
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			return "";
 		}
 
 		private DownloadTask task;
@@ -200,7 +200,7 @@ public class MainActivity extends Activity {
 				}
 			}
 		}
-	}
+    }
 
 	class SeekBarChangeEvent implements OnSeekBarChangeListener {
 		int progress;
@@ -210,6 +210,10 @@ public class MainActivity extends Activity {
 				boolean fromUser) {
 			this.progress = progress * player.mediaPlayer.getDuration()
 					/ seekBar.getMax();
+            if(progress == 99)
+            {
+                playMusic();
+            }
 		}
 
 		@Override
@@ -228,9 +232,50 @@ public class MainActivity extends Activity {
 	protected void onDestroy() {
 		super.onDestroy();
 		if (player != null) {
-			player.stop();
-			player = null;
-		}
-	}
+            player.stop();
+            player = null;
+        }
+    }
 
+    private JSONObject getSong() {
+        HttpClient client = new DefaultHttpClient();
+        StringBuilder builder = new StringBuilder();
+        String musicUrl;
+        HttpGet get = new HttpGet("http://hr.hgdonline.net/music/player.php");
+        try {
+            HttpResponse response = client.execute(get);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+            for (String s = reader.readLine(); s != null; s = reader.readLine()) {
+                builder.append(s);
+            }
+            JSONObject myJsonObject = new JSONObject(builder.toString());
+            return myJsonObject;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void playMusic()
+    {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                JSONObject json = getSong();
+                String SongUrl = json.optString("mp3");
+                String SongCover = json.optString("cover");
+                String SongName = json.optString("music_name");
+
+                player.playUrl(SongUrl);
+                Message msg = handler.obtainMessage();
+                Bundle data = new Bundle();
+                data.putString("SongCover", SongCover);
+                data.putString("SongName", SongName);
+                msg.what = IMAGE;
+                msg.setData(data);
+                handler.sendMessage(msg);
+                //player.playUrl(SongUrl);
+            }
+        }).start();
+    }
 }

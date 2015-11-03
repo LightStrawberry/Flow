@@ -2,6 +2,13 @@
 <items version="2" >
 
     <item
+        jar="/Users/shokill/AndroidStudioProjects/xxxxx/app/libs/volley.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="4a94601db9bdfb7dc60efabb3dea91a0675f591d">
+        <dex dex="/Users/shokill/AndroidStudioProjects/xxxxx/app/build/intermediates/pre-dexed/debug/volley-cfc5bb7eb7cc4999b5a3c2417c9f1c5ae3ef9cc7.jar" />
+    </item>
+    <item
         jar="/Users/shokill/Library/Android/sdk/extras/android/m2repository/com/android/support/support-v4/18.0.0/support-v4-18.0.0.jar"
         jumboMode="false"
         revision="23.0.1"

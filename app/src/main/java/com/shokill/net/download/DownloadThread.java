@@ -13,7 +13,7 @@ public class DownloadThread extends Thread {
 	private File saveFile;
 	private URL downUrl;
 	private int block;
-	/* ���ؿ�ʼλ�� */
+
 	private int threadId = -1;
 	private int downLength;
 	private boolean finish = false;
