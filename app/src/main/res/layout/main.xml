@@ -13,7 +13,7 @@
     <EditText
         android:id="@+id/path"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="12dp"
         android:inputType="none"
         android:text="@string/fileaddress2"
         android:textSize="12sp" />
@@ -61,10 +61,30 @@
         android:layout_height="wrap_content"
         android:max="100" />
 
-    <Button
-        android:id="@+id/btn_online_play"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Flow"
-        android:src="@drawable/player_play"/>
+        android:layout_gravity="center"
+        android:layout_weight="0.04"
+        android:gravity="center">
+
+        <ImageButton
+            android:id="@+id/btn_play_music"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/player_pre" />
+
+        <ImageButton
+            android:id="@+id/btn_online_play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/player_play" />
+
+        <ImageButton
+            android:id="@+id/btn_next_song"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/player_next" />
+    </LinearLayout>
 </LinearLayout>
